@@ -44,5 +44,5 @@ def get_instructions():
           f'\n {out_azure("get expenses from")}\033[0m --- get expenses from one or more sections, '
           f'{out_azure("arguments")}\033[0m: name or names of sections'
           f'\n {out_azure("get sections")}\033[0m --- get all sections, {out_azure("arguments")}\033[0m: none\033[0m'
-          f'\n {out_azure("get pie chart")}\033[0m --- get pie chart for all expenses, '
-          f'{out_azure("arguments")}\033[0m: none\033[0m')
+          f'\n {out_azure("get chart")}\033[0m --- get chart for all expenses, '
+          f'{out_azure("arguments")}\033[0m: type of chart: bar or pie\033[0m')

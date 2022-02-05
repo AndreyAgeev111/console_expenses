@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 import pandas as pd
 import psycopg2 as ps
 import matplotlib.pyplot as plt
+import numpy as np
 
 connection = ps.connect(user="postgres",
                         password="superuser",
@@ -142,9 +143,13 @@ class GetSections(Command):
         print(sections_table)
 
 
-class GetPieChart(Command):
+class GetChart(Command):
 
-    def execute(self):
+    def __init__(self, type_of_chart: str):
+        self.type_of_chart = type_of_chart
+
+    @staticmethod
+    def get_chart():
         section_labels = list(pd.read_sql('SELECT section FROM sections', connection)['section'])
         length_of_labels = len(section_labels)
         expenses = [0] * length_of_labels
@@ -165,10 +170,24 @@ class GetPieChart(Command):
                 section_labels.pop(zero_index)
             except ValueError:
                 flag = False
-        plt.title('Total expenses')
-        plt.pie(expenses, labels=section_labels, autopct='%1.1f%%')
-        plt.axis('equal')
-        plt.show()
+
+        return expenses, section_labels
+
+    def execute(self):
+        expenses, section_labels = self.get_chart()
+        if self.type_of_chart == 'pie':
+            plt.title('Total expenses')
+            plt.pie(expenses, labels=section_labels, autopct='%1.1f%%')
+            plt.axis('equal')
+            plt.show()
+        elif self.type_of_chart == 'bar':
+            index = np.arange(len(expenses))
+            plt.title('Total expenses')
+            plt.bar(index, expenses)
+            plt.xticks(index + 0.4, section_labels)
+            plt.show()
+        else:
+            print('Unknown type of chart, please choose: pie or bar')
 
 
 COMMANDS = {'add section': AddNewSection,
@@ -178,5 +197,5 @@ COMMANDS = {'add section': AddNewSection,
             'clear section': ClearSection,
             'get expenses from': GetExpensesFromSection,
             'get sections': GetSections,
-            'get pie chart': GetPieChart
+            'get chart': GetChart
             }
