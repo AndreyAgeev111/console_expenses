@@ -13,6 +13,7 @@ connection = ps.connect(user="postgres",
 cursor = connection.cursor()
 now = datetime.datetime.now()
 current_date = f"{now.year}-{now.month}-{now.day}"
+moneybox = 0.0
 
 
 class Command(ABC):
@@ -27,7 +28,7 @@ class AddNewSection(Command):
     def __init__(self, section: str):
         self.section = section
 
-    def execute(self):
+    def execute(self) -> None:
         try:
             cursor.execute(f'INSERT INTO sections (section) VALUES (\'{self.section}\')')
             connection.commit()
@@ -36,7 +37,7 @@ class AddNewSection(Command):
             connection.rollback()
 
     @staticmethod
-    def name():
+    def name() -> str:
         return 'add section'
 
 
@@ -45,13 +46,13 @@ class DeleteSection(Command):
     def __init__(self, section: str):
         self.section = section
 
-    def execute(self):
+    def execute(self) -> None:
         ClearSection(self.section).execute()
         cursor.execute(f'DELETE FROM sections WHERE section = \'{self.section}\'')
         connection.commit()
 
     @staticmethod
-    def name():
+    def name() -> str:
         return 'delete section'
 
 
@@ -62,15 +63,21 @@ class AddNewExpense(Command):
         self.price = price
         self.comment = comment.replace('-', ' ')
 
-    def execute(self):
-        cursor.execute(f'SELECT id FROM sections WHERE section = \'{self.section}\'')
-        id_section = cursor.fetchone()[0]
-        cursor.execute(f'INSERT INTO expenses (price, comment, date_of_day, id_section) '
-                       f'VALUES ({self.price}, \'{self.comment}\', \'{current_date})\', {id_section})')
-        connection.commit()
+    def execute(self) -> None:
+        try:
+            cursor.execute(f'SELECT id FROM sections WHERE section = \'{self.section}\'')
+            id_section = cursor.fetchone()[0]
+            cursor.execute(f'INSERT INTO expenses (price, comment, date_of_day, id_section) '
+                           f'VALUES ({self.price}, \'{self.comment}\', \'{current_date})\', {id_section})')
+            connection.commit()
+        except TypeError:
+            print(f'Section {self.section} does not exist')
+        except ps.errors.CheckViolation:
+            print('The price must be greater than 0!')
+            connection.rollback()
 
     @staticmethod
-    def name():
+    def name() -> str:
         return 'add expense'
 
 
@@ -81,15 +88,20 @@ class DeleteExpense(Command):
         self.comment = comment.replace('-', ' ')
         self.date = date
 
-    def execute(self):
-        cursor.execute(f'SELECT id FROM sections WHERE section = \'{self.section}\'')
-        id_section = cursor.fetchone()[0]
-        cursor.execute(f'DELETE FROM expenses WHERE date_of_day = \'{self.date}\' '
-                       f'AND comment = \'{self.comment}\' AND id_section = {id_section}')
-        connection.commit()
+    def execute(self) -> None:
+        try:
+            cursor.execute(f'SELECT id FROM sections WHERE section = \'{self.section}\'')
+            id_section = cursor.fetchone()[0]
+            cursor.execute(f'DELETE FROM expenses WHERE date_of_day = \'{self.date}\' '
+                           f'AND comment = \'{self.comment}\' AND id_section = {id_section}')
+            connection.commit()
+        except TypeError:
+            print('This waste does not exist, please try another')
+        except ps.errors.InvalidDatetimeFormat:
+            print('The purchase date was entered incorrectly')
 
     @staticmethod
-    def name():
+    def name() -> str:
         return 'delete expense'
 
 
@@ -98,7 +110,7 @@ class ClearSection(Command):
     def __init__(self, section: str):
         self.section = section
 
-    def execute(self):
+    def execute(self) -> None:
         try:
             cursor.execute(f'SELECT id FROM sections WHERE section = \'{self.section}\'')
             id_section = cursor.fetchone()[0]
@@ -108,7 +120,7 @@ class ClearSection(Command):
             print(f'Section {self.section} does not exist')
 
     @staticmethod
-    def name():
+    def name() -> str:
         return 'clear section'
 
 
@@ -118,7 +130,7 @@ class GetExpensesFromSection(Command):
         self.sections = sections
 
     @staticmethod
-    def get_expenses_from_sections(section):
+    def get_expenses_from_sections(section) -> None:
         try:
             cursor.execute(f'SELECT id FROM sections WHERE section = \'{section}\'')
             id_sect = cursor.fetchone()[0]
@@ -127,7 +139,7 @@ class GetExpensesFromSection(Command):
         except TypeError:
             print(f'Section {section} does not exist')
 
-    def execute(self):
+    def execute(self) -> None:
         self.sections = self.sections.split(", ")
         if len(self.sections) != 1:
             for section in self.sections:
@@ -138,7 +150,7 @@ class GetExpensesFromSection(Command):
 
 class GetSections(Command):
 
-    def execute(self):
+    def execute(self) -> None:
         sections_table = pd.read_sql('SELECT section FROM sections', connection)
         print(sections_table)
 
@@ -149,7 +161,7 @@ class GetChart(Command):
         self.type_of_chart = type_of_chart
 
     @staticmethod
-    def get_chart():
+    def get_chart() -> tuple:
         section_labels = list(pd.read_sql('SELECT section FROM sections', connection)['section'])
         length_of_labels = len(section_labels)
         expenses = [0] * length_of_labels
@@ -160,7 +172,7 @@ class GetChart(Command):
             expense_table = list(pd.DataFrame(
                 pd.read_sql(f'SELECT * FROM expenses WHERE id_section = \'{id_sect}\'', connection))['price'])
             for i in range(len(expense_table)):
-                expenses[j] += int(expense_table[i])
+                expenses[j] += float(expense_table[i])
 
         flag = True
         while flag:
@@ -173,16 +185,16 @@ class GetChart(Command):
 
         return expenses, section_labels
 
-    def execute(self):
+    def execute(self) -> None:
         expenses, section_labels = self.get_chart()
         if self.type_of_chart == 'pie':
-            plt.title('Total expenses')
+            plt.title(f'Total expenses = {sum(expenses)}')
             plt.pie(expenses, labels=section_labels, autopct='%1.1f%%')
             plt.axis('equal')
             plt.show()
         elif self.type_of_chart == 'bar':
             index = np.arange(len(expenses))
-            plt.title('Total expenses')
+            plt.title(f'Total expenses = {sum(expenses)}')
             plt.bar(index, expenses)
             plt.xticks(index, section_labels)
             plt.show()
