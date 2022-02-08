@@ -184,7 +184,7 @@ class GetChart(Command):
             index = np.arange(len(expenses))
             plt.title('Total expenses')
             plt.bar(index, expenses)
-            plt.xticks(index + 0.4, section_labels)
+            plt.xticks(index, section_labels)
             plt.show()
         else:
             print('Unknown type of chart, please choose: pie or bar')
