@@ -40,6 +40,7 @@ The user manual is also provided:
 There are different types of visual representation of data:
 ![Alt-текст](https://github.com/AndreyAgeev111/console_expenses/blob/master/res/bar.png "Bar")
 ![Alt-текст](https://github.com/AndreyAgeev111/console_expenses/blob/master/res/pie.png "Pie")
-Example of how the program works
+
+###Example of how the program works
 ![Alt-текст](https://github.com/AndreyAgeev111/console_expenses/blob/master/res/example_1.png "Example")
 ![Alt-текст](https://github.com/AndreyAgeev111/console_expenses/blob/master/res/example_2.png "Example")
