@@ -13,7 +13,6 @@ connection = ps.connect(user="postgres",
 cursor = connection.cursor()
 now = datetime.datetime.now()
 current_date = f"{now.year}-{now.month}-{now.day}"
-moneybox = 0.0
 
 
 class Command(ABC):
@@ -202,6 +201,43 @@ class GetChart(Command):
             print('Unknown type of chart, please choose: pie or bar')
 
 
+class AddCoinsToMoneybox(Command):
+
+    def __init__(self, price: float, comment: str):
+        self.price = price
+        self.comment = comment.replace('-', ' ')
+
+    def execute(self):
+        try:
+            cursor.execute(f'SELECT id FROM sections WHERE section = \'moneybox\'')
+            id_section = cursor.fetchone()[0]
+            cursor.execute(f'INSERT INTO expenses (price, comment, date_of_day, id_section) '
+                           f'VALUES ({self.price}, \'{self.comment}\', \'{current_date})\', {id_section})')
+            connection.commit()
+        except ps.errors.CheckViolation:
+            print('The money must be greater than 0!')
+            connection.rollback()
+
+
+class CheckMoneyBox(Command):
+
+    def execute(self):
+        section_labels = list(pd.read_sql('SELECT section FROM sections', connection)['section'])
+        length_of_labels = len(section_labels)
+        expenses = [0] * length_of_labels
+
+        for j in range(length_of_labels):
+            cursor.execute(f'SELECT id FROM sections WHERE section = \'{section_labels[j]}\'')
+            id_sect = cursor.fetchone()[0]
+            expense_table = list(pd.DataFrame(
+                pd.read_sql(f'SELECT * FROM expenses WHERE id_section = \'{id_sect}\'', connection))['price'])
+            for i in range(len(expense_table)):
+                expenses[j] += float(expense_table[i])
+        id_moneybox = section_labels.index('moneybox')
+        moneybox = expenses.pop(id_moneybox)
+        print(f'There are now {moneybox - sum(expenses)} in the moneybox')
+
+
 COMMANDS = {'add section': AddNewSection,
             'delete section': DeleteSection,
             'delete expense': DeleteExpense,
@@ -209,5 +245,7 @@ COMMANDS = {'add section': AddNewSection,
             'clear section': ClearSection,
             'get expenses from': GetExpensesFromSection,
             'get sections': GetSections,
-            'get chart': GetChart
+            'get chart': GetChart,
+            'add to moneybox': AddCoinsToMoneybox,
+            'check moneybox': CheckMoneyBox
             }

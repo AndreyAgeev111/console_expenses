@@ -38,11 +38,15 @@ def get_instructions():
           f'\n {out_azure("delete expense")}\033[0m --- delete expense with a comment and date, '
           f'{out_azure("arguments")}\033[0m: name of section, comment on expense, date of expense'
           f'\n {out_azure("add expense")}\033[0m --- add new expense in the section, '
-          f' {out_azure("arguments")}\033[0m: name of section, price of expense, comment on expense'
+          f'{out_azure("arguments")}\033[0m: name of section, price of expense, comment on expense'
           f'\n {out_azure("clear section")}\033[0m --- clear all expenses from, '
           f'{out_azure("arguments")}\033[0m: name of section'
           f'\n {out_azure("get expenses from")}\033[0m --- get expenses from one or more sections, '
           f'{out_azure("arguments")}\033[0m: name or names of sections'
           f'\n {out_azure("get sections")}\033[0m --- get all sections, {out_azure("arguments")}\033[0m: none\033[0m'
           f'\n {out_azure("get chart")}\033[0m --- get chart for all expenses, '
-          f'{out_azure("arguments")}\033[0m: type of chart: bar or pie\033[0m')
+          f'{out_azure("arguments")}\033[0m: type of chart: bar or pie'
+          f'\n {out_azure("add to moneybox")}\033[0m --- add money to your moneybox,'
+          f'{out_azure("arguments")}\033[0m: money to add and comment'
+          f'\n {out_azure("check moneybox")}\033[0m --- check balance of the moneybox, '
+          f'{out_azure("arguments")}\033[0m: none\033[0m')
