@@ -38,8 +38,8 @@ Here the Postgresql database was used, the code for creating tables for storing 
 The user manual is also provided:
 ![Alt-текст](https://github.com/AndreyAgeev111/console_expenses/blob/master/res/manual.png "Manual")
 There are different types of visual representation of data:
-![Alt-текст](https://github.com/AndreyAgeev111/console_expenses/blob/master/res/bar_chart.png "Bar")
-![Alt-текст](https://github.com/AndreyAgeev111/console_expenses/blob/master/res/pie_chart.png "Pie")
+![Alt-текст](https://github.com/AndreyAgeev111/console_expenses/blob/master/res/bar.png "Bar")
+![Alt-текст](https://github.com/AndreyAgeev111/console_expenses/blob/master/res/pie.png "Pie")
 ###Example of how the program works
 ![Alt-текст](https://github.com/AndreyAgeev111/console_expenses/blob/master/res/example_1.png "Example")
 ![Alt-текст](https://github.com/AndreyAgeev111/console_expenses/blob/master/res/example_2.png "Example")
