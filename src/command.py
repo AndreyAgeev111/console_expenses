@@ -181,6 +181,9 @@ class GetChart(Command):
                 section_labels.pop(zero_index)
             except ValueError:
                 flag = False
+        id_moneybox = section_labels.index('moneybox')
+        expenses.pop(id_moneybox)
+        section_labels.pop(id_moneybox)
 
         return expenses, section_labels
 
