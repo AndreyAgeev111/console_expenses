@@ -1,7 +1,7 @@
 ## A console application about your expenses or income
 This is the basic version of the application, is under development. 
 Here the Postgresql database was used, the code for creating tables for storing data:
-###Table expenses
+### Table expenses
 
     CREATE TABLE IF NOT EXISTS public.expenses
     (
@@ -21,7 +21,7 @@ Here the Postgresql database was used, the code for creating tables for storing 
 
     ALTER TABLE IF EXISTS public.expenses
         OWNER to postgres;
-###Table sections
+### Table sections
 
     CREATE TABLE IF NOT EXISTS public.sections
     (
