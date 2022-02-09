@@ -210,7 +210,7 @@ class AddCoinsToMoneybox(Command):
         self.price = price
         self.comment = comment.replace('-', ' ')
 
-    def execute(self):
+    def execute(self) -> None:
         try:
             cursor.execute(f'SELECT id FROM sections WHERE section = \'moneybox\'')
             id_section = cursor.fetchone()[0]
@@ -224,7 +224,7 @@ class AddCoinsToMoneybox(Command):
 
 class CheckMoneyBox(Command):
 
-    def execute(self):
+    def execute(self) -> None:
         section_labels = list(pd.read_sql('SELECT section FROM sections', connection)['section'])
         length_of_labels = len(section_labels)
         expenses = [0] * length_of_labels
