@@ -2,6 +2,7 @@
 This is the basic version of the application, is under development. 
 Here the Postgresql database was used, the code for creating tables for storing data:
 ### Table expenses
+```SQL
 
     CREATE TABLE IF NOT EXISTS public.expenses
     (
@@ -21,7 +22,9 @@ Here the Postgresql database was used, the code for creating tables for storing 
 
     ALTER TABLE IF EXISTS public.expenses
         OWNER to postgres;
+```
 ### Table sections
+```SQL
 
     CREATE TABLE IF NOT EXISTS public.sections
     (
@@ -35,6 +38,7 @@ Here the Postgresql database was used, the code for creating tables for storing 
     
     ALTER TABLE IF EXISTS public.sections
         OWNER to postgres;
+```
 The user manual is also provided:
 ![Alt-текст](https://github.com/AndreyAgeev111/console_expenses/blob/master/res/manual.png "Manual")
 There are different types of visual representation of data:
